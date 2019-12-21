@@ -8,23 +8,23 @@
 
 <body>
   <!--ここのmission_3-X-X.phpは必ず変えること！-->
-  <form action="mission_3-3.php" method="post">
+  <form action="mission_3-4.php" method="post">
     <p>名前：<input type="text" name="personName" placeholder="名前"></p>
     <p>コメント：<input type="text" name="comment" placeholder="コメント"></p>
     <input type="submit" value="送信">
   </form>
   <!--削除対象番号指定用フォーム / ここのmission_3-X-X.phpは必ず変えること！-->
-  <form action="mission_3-3.php" method="post">
+  <form action="mission_3-4.php" method="post">
     <p>削除対象番号：<input type="text" name="deleteNumber" placeholder="削除対象番号"></p>
     <input type="submit" value="削除">
   </form>
   <!--編集対象番号指定用フォーム / ここのmission_3-X-X.phpは必ず変えること！-->
-  <form action="mission_3-3.php" method="post">
+  <form action="mission_3-4.php" method="post">
     <p>編集対象番号：<input type="text" name="editNumber" placeholder="編集対象番号"></p>
     <input type="submit" value="編集">
   </form>
   <?php
-  $filename = "mission_3-3.txt";
+  $filename = "mission_3-4.txt";
   // ファイルに書き込む
   // 名前とコメントが入力されているか？
   if (!(empty($_POST["personName"])) && !(empty($_POST["comment"]))) {
@@ -76,7 +76,7 @@
   } elseif (!(empty($_POST["deleteNumber"]))) {
       $deleteNumber = $_POST["deleteNumber"];
       $file_array = array();
-      $filename = "mission_3-3.txt";
+      $filename = "mission_3-4.txt";
       // ファイルが存在するか？
       if (file_exists($filename)) {
           $fpr = fopen($filename, 'r');
@@ -101,6 +101,10 @@
           }
           fclose($fpw);
       }
+      // 編集フォームに入力されてるか？
+  } elseif (!(empty($_POST["editNumber"]))) {
+      $editNumber = $_POST["editNumber"];
+      echo $editNumber;
   } elseif (file_exists($filename)) {
       // ↑がないと何も入力せずにボタンを押すと表示されていたものが消えてしまった
       $fpr = fopen($filename, 'r');
