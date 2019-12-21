@@ -1,25 +1,26 @@
 <?php
   $filename = "mission_3-4.txt";
+  $editName = "";
+  $editComment = "";
+  $editNumber = "";
   // 編集番号
   // 編集フォームに入力されているか？
   if (!(empty($_POST["editNumber"]))) {
-      $editNumber = $_POST["editNumber"];
-  } else {
-      $editNumber = "";
-  }
-  $editName = "";
-  $editComment = "";
-  // ファイルを読み込んで配列に入れる
-  $file_array = temp_array($filename);
-  if (!empty($file_array)) {
-      foreach ($file_array as $value) {
-          $text = explode("<>", $value);
-          // 編集対象番号と一致するか？
-          // $text[0] == $editNumberだけだとforeachの最後は必ず""となりtrueとなってしまった
-          if (($text[0] == $editNumber) && ($text[0] != "")) {
-              //値をセッションに保存
-              $editName = $text[1];
-              $editComment = $text[2];
+      $tempEditNumber = $_POST["editNumber"];
+      if (file_exists($filename)) {
+          // ファイルを読み込んで配列に入れる
+          $file_array = temp_array($filename);
+          if (!empty($file_array)) {
+              foreach ($file_array as $value) {
+                  $text = explode("<>", $value);
+                  // 編集対象番号と一致するか？
+                  // $text[0] == $editNumberだけだとforeachの最後は必ず""となりtrueとなってしまった
+                  if (($text[0] == $tempEditNumber) && ($text[0] != "")) {
+                      $editName = $text[1];
+                      $editComment = $text[2];
+                      $editNumber = $tempEditNumber;
+                  }
+              }
           }
       }
   }
@@ -39,6 +40,9 @@
         value="<?php echo $editName ?>"></p>
     <p>コメント：<input type="text" name="comment" placeholder="コメント"
         value="<?php echo $editComment ?>"></p>
+    <!--hidden contents-->
+    <input type="hidden" name="editNum"
+      value="<?php echo $editNumber ?>">
     <input type="submit" value="送信">
   </form>
   <!--削除対象番号指定用フォーム / ここのmission_3-X-X.phpは必ず変えること！-->
@@ -55,7 +59,7 @@
   $filename = "mission_3-4.txt";
   // 新規投稿
   // 名前とコメントが入力されている？
-  if (!(empty($_POST["personName"])) && !(empty($_POST["comment"]))) {
+  if (!(empty($_POST["personName"])) && !(empty($_POST["comment"])) && $_POST["editNum"] == "") {
       $personName = $_POST["personName"];
       $comment = $_POST["comment"];
       // 現在の日時を取得
@@ -75,7 +79,35 @@
       // ファイルに書き込み
       fwrite($fpa, $postNum."<>".$personName."<>".$comment."<>".$time."\n");
       fclose($fpa);
-  // 削除番号
+  // 編集
+  } elseif (!(empty($_POST["personName"])) && !(empty($_POST["comment"]))&& !(empty($_POST["editNum"]))) {
+      $personName = $_POST["personName"];
+      $comment = $_POST["comment"];
+      $editNum = $_POST["editNum"];
+      // ファイルが存在するか？
+      if (file_exists($filename)) {
+          $temp_array = array();
+          // ファイルを読み込んで配列に入れる
+          $file_array = temp_array($filename);
+          foreach ($file_array as $value) {
+              $text = explode("<>", $value);
+              if ($text[0] == $editNum) {
+                  // 現在の日時を取得
+                  date_default_timezone_set('Asia/Tokyo');
+                  $time = date('Y/m/d H:i:s');
+                  // 編集番号と一致する時書き換える
+                  $value = $editNum."<>".$personName."<>".$comment."<>".$time."\n";
+              }
+              array_push($temp_array, $value);
+          }
+          // ファイルに書き込む
+          $fpw = fopen($filename, 'w');
+          foreach ($temp_array as $value) {
+              fwrite($fpw, $value);
+          }
+          fclose($fpw);
+      }
+      // 削除
   // 削除フォームに入力されてるか？
   } elseif (!(empty($_POST["deleteNumber"]))) {
       $deleteNumber = $_POST["deleteNumber"];
@@ -92,8 +124,8 @@
                   fwrite($fpw, $value);
               }
           }
+          fclose($fpw);
       }
-      fclose($fpw);
   }
   // ファイルを読み込み表示する
   if (file_exists($filename)) {
