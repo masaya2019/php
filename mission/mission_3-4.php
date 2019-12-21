@@ -1,3 +1,29 @@
+<?php
+  $filename = "mission_3-4.txt";
+  // 編集番号
+  // 編集フォームに入力されているか？
+  if (!(empty($_POST["editNumber"]))) {
+      $editNumber = $_POST["editNumber"];
+  } else {
+      $editNumber = "";
+  }
+  $editName = "";
+  $editComment = "";
+  // ファイルを読み込んで配列に入れる
+  $file_array = temp_array($filename);
+  if (!empty($file_array)) {
+      foreach ($file_array as $value) {
+          $text = explode("<>", $value);
+          // 編集対象番号と一致するか？
+          // $text[0] == $editNumberだけだとforeachの最後は必ず""となりtrueとなってしまった
+          if (($text[0] == $editNumber) && ($text[0] != "")) {
+              //値をセッションに保存
+              $editName = $text[1];
+              $editComment = $text[2];
+          }
+      }
+  }
+?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -9,8 +35,10 @@
 <body>
   <!--新規投稿フォーム / ここのmission_3-X-X.phpは必ず変えること！-->
   <form action="mission_3-4.php" method="post">
-    <p>名前：<input type="text" name="personName" placeholder="名前"></p>
-    <p>コメント：<input type="text" name="comment" placeholder="コメント"></p>
+    <p>名前：<input type="text" name="personName" placeholder="名前"
+        value="<?php echo $editName ?>"></p>
+    <p>コメント：<input type="text" name="comment" placeholder="コメント"
+        value="<?php echo $editComment ?>"></p>
     <input type="submit" value="送信">
   </form>
   <!--削除対象番号指定用フォーム / ここのmission_3-X-X.phpは必ず変えること！-->
@@ -51,15 +79,10 @@
   // 削除フォームに入力されてるか？
   } elseif (!(empty($_POST["deleteNumber"]))) {
       $deleteNumber = $_POST["deleteNumber"];
-      $file_array = array();
       // ファイルが存在するか？
       if (file_exists($filename)) {
-          $fpr = fopen($filename, 'r');
-          // 配列に入れる
-          while (!feof($fpr)) {
-              array_push($file_array, fgets($fpr));
-          }
-          fclose($fpr);
+          // ファイルを読み込んで配列に入れる
+          $file_array = temp_array($filename);
           // ファイルに書き込む
           $fpw = fopen($filename, 'w');
           foreach ($file_array as $value) {
@@ -69,10 +92,10 @@
                   fwrite($fpw, $value);
               }
           }
-          fclose($fpw);
       }
+      fclose($fpw);
   }
-  // ファイルを読ん込み表示する
+  // ファイルを読み込み表示する
   if (file_exists($filename)) {
       $fpr = fopen($filename, 'r');
       while (!feof($fpr)) {
@@ -85,6 +108,19 @@
           echo "<p>".$printText."</p>";
       }
       fclose($fpr);
+  }
+  /* 関数 */
+  // temp_arrayの作成
+  function temp_array($filename)
+  {
+      $file_array = array();
+      $fpr = fopen($filename, 'r');
+      // 配列に入れる
+      while (!feof($fpr)) {
+          array_push($file_array, fgets($fpr));
+      }
+      fclose($fpr);
+      return $file_array;
   }
   ?>
 </body>
