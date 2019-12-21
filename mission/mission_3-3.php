@@ -28,9 +28,10 @@
       // 現在の日時を取得
       date_default_timezone_set('Asia/Tokyo');
       $time = date('Y/m/d H:i:s');
-      // ファイルが存在するかをチェックする
+      // ファイルが存在するかをチェックする + ファイルが空かチェック
+      // 空かのチェックがないと削除して0になったとき$file_data[count($file_data)-1];でエラーが出てしまう
       // https://www.flatflag.nir87.com/file_exists-888
-      if (file_exists($filename)) {
+      if (file_exists($filename) && (!(empty(file($filename))))) {
           /*
           ファイルの行数をカウントする→これだと削除した後に追加すると同じ番号が現れてしまう...
           https://so-zou.jp/web-app/tech/programming/php/file/lines.htm
@@ -66,12 +67,10 @@
           }
           fclose($fpr);
       }
-      // 削除する
-  // 削除フォームに入力されてるか？
+      // 削除フォームに入力されてるか？
   } elseif (!(empty($_POST["deleteNumber"]))) {
       $deleteNumber = $_POST["deleteNumber"];
       $file_array = array();
-      $filename = "mission_3-3.txt";
       // ファイルが存在するか？
       if (file_exists($filename)) {
           $fpr = fopen($filename, 'r');
