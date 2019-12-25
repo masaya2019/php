@@ -25,12 +25,12 @@ if (!(empty($_POST["text"]))) {
   // ファイルの存在チェック
   // https://www.flatflag.nir87.com/file_exists-888
   if (file_exists($filename)) {
-      $fp = fopen($filename, 'r');
-      while (!feof($fp)) {
-          $txt = fgets($fp);
-          echo $txt.'<br>';
+      // ファイルの読み取り
+      // https://ponk.jp/php/file/read
+      $file = file($filename);
+      foreach ($file as $text) {
+          echo $text."<br>";
       }
-      fclose($fp);
   }
 ?>
 </body>
