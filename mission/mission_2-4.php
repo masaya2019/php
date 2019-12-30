@@ -1,11 +1,12 @@
 <?php
-if (!(empty($_POST["text"]))) {
-    $hensu = $_POST["text"];
-    $filename = "mission_2-4.txt";
-    $fp = fopen($filename, "a");
-    fwrite($fp, $hensu."\n");
-    fclose($fp);
-}
+  // 投稿が空でないならファイルに書き込む
+  if (!(empty($_POST["text"]))) {
+      $hensu = $_POST["text"];
+      $filename = "mission_2-4.txt";
+      $fp = fopen($filename, "a");
+      fwrite($fp, $hensu."\n");
+      fclose($fp);
+  }
 ?>
 <!DOCTYPE html>
 <html lang="ja">
