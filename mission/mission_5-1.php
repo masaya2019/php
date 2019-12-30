@@ -75,6 +75,8 @@
                     $errmsg = "ERROR!!編集用のパスワードが違います！";
                 }
             }
+        } else {
+            $errmsg = "ERROR!!パスワードを入力してください";
         }
     }
     // issetで送信しないときにはエラーを表示しない
@@ -201,7 +203,7 @@
         $password = "******";
         $pdo = new PDO($dsn, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
         // tableが存在していなければtableを作成
-        $sql = "CREATE TABLE IF NOT EXISTS forum (id INT AUTO_INCREMENT PRIMARY KEY, name char(32), comment TEXT, time DATETIME, password VARCHAR(10))";
+        $sql = "CREATE TABLE IF NOT EXISTS forum (id INT AUTO_INCREMENT PRIMARY KEY, name CHAR(10), comment VARCHAR(50), time DATETIME, password CHAR(10))";
         $pdo->query($sql);
         return $pdo;
     }
@@ -244,6 +246,11 @@
         $sql -> bindParam(':id', $deleteNumber, PDO::PARAM_INT);
         $sql -> execute();
     }
+    // エスケープ処理(出力時のみ)
+    function escape($s)
+    {
+        return htmlspecialchars($s, ENT_QUOTES, "UTF-8");
+    }
     // 投稿を表示
     function displayPosts($pdo)
     {
@@ -251,7 +258,14 @@
         $stmt = $pdo->query($sql);
         $results = $stmt->fetchAll();
         foreach ($results as $row) {
-            echo "<p>".$row['id'].' '.$row['name'].' '.$row['comment']." ".$row['time']." ".$row['password'].'</p>';
+            $text = "<p>".
+            $row['id']." ".
+            escape($row['name'])." ".
+            escape($row['comment'])." ".
+            $row['time']." ".
+            //escape($row['password']).
+            "</p>";
+            echo $text;
         }
     }
   ?>
@@ -260,28 +274,29 @@
   <!--新規投稿フォーム-->
   <p>【　投稿フォーム　】</p>
   <form action="mission_5-1.php" method="post">
-    <input type="text" name="personName" placeholder="名前"
-      value="<?php echo $editName ?>">
-    <input type="text" name="comment" placeholder="コメント"
-      value="<?php echo $editComment ?>">
-    <input type="password" name="password" placeholder="パスワード">
+    <input type="text" name="personName" placeholder="名前（10文字以内）"
+      value="<?php echo escape($editName) ?>" maxlength="10">
+    <input type="text" name="comment" placeholder="コメント（50文字以内）"
+      value="<?php echo escape($editComment) ?>" maxlength="50"
+      size="50">
+    <input type="password" name="password" placeholder="パスワード（10文字以内）" maxlength="10">
     <!--hidden contents-->
     <input type="hidden" name="editNum"
-      value="<?php echo $editNumber ?>">
+      value="<?php echo escape($editNumber) ?>">
     <input type="submit" value="送信">
   </form>
   <!--削除対象番号指定用フォーム-->
   <p>【　削除フォーム　】</p>
   <form action="mission_5-1.php" method="post">
     <input type="text" name="deleteNumber" placeholder="削除対象番号">
-    <input type="password" name="deletePassword" placeholder="パスワード">
+    <input type="password" name="deletePassword" placeholder="パスワード（10文字以内）" maxlength="10">
     <input type="submit" value="削除">
   </form>
   <!--編集対象番号指定用フォーム-->
   <p>【　編集フォーム　】</p>
   <form action="mission_5-1.php" method="post">
     <input type="text" name="editNumber" placeholder="編集対象番号">
-    <input type="password" name="editPassword" placeholder="パスワード">
+    <input type="password" name="editPassword" placeholder="パスワード（10文字以内）" maxlength="10">
     <input type="submit" value="編集">
   </form>
   <?php
