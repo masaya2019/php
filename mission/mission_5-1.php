@@ -282,7 +282,7 @@
     <input type="password" name="password" placeholder="パスワード（10文字以内）" maxlength="10">
     <!--hidden contents-->
     <input type="hidden" name="editNum"
-      value="<?php echo escape($editNumber) ?>">
+      value="<?php echo $editNumber ?>">
     <input type="submit" value="送信">
   </form>
   <!--削除対象番号指定用フォーム-->
