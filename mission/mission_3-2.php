@@ -7,6 +7,7 @@ if (!(empty($_POST["personName"])) && !(empty($_POST["comment"]))) {
     date_default_timezone_set('Asia/Tokyo');
     $time = date('Y/m/d H:i:s');
     $filename = "mission_3-2.txt";
+    // 投稿番号の決定
     // ファイルが存在するかをチェックする
     // https://www.flatflag.nir87.com/file_exists-888
     if (file_exists($filename)) {
@@ -42,34 +43,21 @@ if (!(empty($_POST["personName"])) && !(empty($_POST["comment"]))) {
   $filename = "mission_3-2.txt";
   // ファイルを読み込み
   if (file_exists($filename)) {
-      $fpr = fopen($filename, 'r');
-      while (!feof($fpr)) {
-          $txt = fgets($fpr);
+      // ファイルの読み取り
+      // https://ponk.jp/php/file/read
+      $file_array = file($filename);
+      foreach ($file_array as $text) {
           // explodeでテキストを分割する
           // https://blog.codecamp.jp/php-explode
-          $text = explode("<>", $txt);
+          $newText = explode("<>", $text);
           $printText = "";
-          foreach ($text as $value) {
+          // <>を" "に変換する
+          foreach ($newText as $value) {
               $printText .= $value." ";
           }
           echo "<p>".$printText."</p>";
-          //var_dump($text);
       }
-      fclose($fpr);
   }
-  /*
-  ＜問題点＞
-  エラー文
-  Warning: A non-numeric value encountered
-  Notice: A non well formed numeric value encountered
-  ＜解決策＞
-  $printText += $value." ";
-  ↓
-  $printText .= $value." ";
-  ＜原因＞
-  文字の連結は「.=」を用いる
-  他の言語との違いを認識していなかった
-  */
   ?>
 </body>
 
