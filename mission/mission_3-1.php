@@ -7,6 +7,7 @@ if (!(empty($_POST["personName"])) && !(empty($_POST["comment"]))) {
     date_default_timezone_set('Asia/Tokyo');
     $time = date('Y/m/d H:i:s');
     $filename = "mission_3-1.txt";
+    // 投稿番号の決定
     // ファイルが存在するかをチェックする
     // https://www.flatflag.nir87.com/file_exists-888
     if (file_exists($filename)) {
