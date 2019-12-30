@@ -1,17 +1,3 @@
-<?php
-// $_POST["text"]の中身が空(empty)でないとき(!)
-// https://qiita.com/wakahara3/items/bb7c8d7a1673b161abe7
-// issetでもできそう？ https://geek-memo.com/isset-empty/
-if (!(empty($_POST["text"]))) {
-    $hensu = $_POST["text"];
-    $filename = "mission_2-2.txt";
-    $fp = fopen($filename, "w");
-    fwrite($fp, $hensu);
-    fclose($fp);
-    date_default_timezone_set('Asia/Tokyo');
-    $time = date('Y年m月d日 H時i分');
-}
-?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -32,8 +18,18 @@ if (!(empty($_POST["text"]))) {
     <input type="submit" value="送信">
   </form>
   <?php
-  // 上と同様
+  // $_POST["text"]の中身が空(empty)でないとき(!)
+  // https://qiita.com/wakahara3/items/bb7c8d7a1673b161abe7
+  // issetでもできそう？ https://geek-memo.com/isset-empty/
   if (!(empty($_POST["text"]))) {
+      $hensu = $_POST["text"];
+      $filename = "mission_2-2.txt";
+      $fp = fopen($filename, "w");
+      fwrite($fp, $hensu);
+      fclose($fp);
+      date_default_timezone_set('Asia/Tokyo');
+      $time = date('Y年m月d日 H時i分');
+      // 下に表示する
       if ($_POST["text"] == "完成！") {
           echo "おめでとう！";
       } else {
